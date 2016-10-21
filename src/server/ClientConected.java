@@ -29,7 +29,7 @@ public class ClientConected implements Runnable {
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			out = new PrintWriter(socket.getOutputStream());
 		} catch (IOException e) {
-			Logger.error("ClientConeted Contruct");
+			Logger.error("[ERROR] ClientConeted Contruct");
 		}
 		
 		start();
@@ -38,17 +38,25 @@ public class ClientConected implements Runnable {
 	@Override
 	public void run() {
 		receiveNickname();
-//		sendListOfClients();
+		sendUserJoined();
+		sendListOfClients();
 		
 		receiveMessages();
 	}
 
 	private void receiveMessages() {
-		while (true) {
+		while (socket.isConnected()) {
 			String messageReceived = null;
 			
 			try {
 				messageReceived = in.readLine();
+				
+				if (messageReceived == null) {
+					Logger.info(this.nickname + " se desconectou.");
+					sendUserLeft();
+					return;
+				}
+				
 			} catch (IOException e) {
 				Logger.error("[ERROR] ClientConected.receiveMessages()");
 			}
@@ -70,26 +78,57 @@ public class ClientConected implements Runnable {
 			return CodesServerReceive.CODE_LIST;
 		}
 		
-		
-		
 		return "";
+	}
+	
+	private void sendUserLeft() {
+		for (ClientConected client : clients) {
+			if (this.nickname == client.getNickname() || client.getNickname() == null) {
+				continue;
+			}
+			
+			String message = generateMessageProtocol(CodesClientReceive.CODE_SAIU, this.nickname);
+			
+			client.getOutStream().println(message);
+			client.getOutStream().flush();
+		}
+	}
+	
+	private void sendUserJoined() {
+		for (ClientConected client : clients) {
+			if (this.nickname == client.getNickname() || client.getNickname() == null) {
+				continue;
+			}
+			
+			String message = generateMessageProtocol(CodesClientReceive.CODE_ENTROU, this.nickname);
+			
+			client.getOutStream().println(message);
+			client.getOutStream().flush();
+		}
 	}
 	
 	private void sendListOfClients() {
 		for (ClientConected client : clients) {
-			if (this.nickname == client.getNickname()) {
+			if (this.nickname == client.getNickname() || client.getNickname() == null) {
 				continue;
 			}
 			
-			String message = "{0} {1}";
-			message = message.replace("{0}", CodesClientReceive.CODE_USUARIO);
-			message = message.replace("{1}", client.getNickname());
+			String message = generateMessageProtocol(CodesClientReceive.CODE_USUARIO, client.getNickname());
 			
 			out.println(message);
 			out.flush();
 		}
 	}
 
+	private String generateMessageProtocol(String code, String message) {
+		String messageSender = "{0} {1}";
+		
+		messageSender = messageSender.replace("{0}", code);
+		messageSender = messageSender.replace("{1}", message);
+		
+		return messageSender;
+	}
+	
 	private void receiveNickname() {
 		out.println("Olá seja bem-vindo.");
 		out.println("Digite o seu Nickname para se conectar ao chat.");
@@ -103,7 +142,7 @@ public class ClientConected implements Runnable {
 				isValidNickname = isValidNickname(nicknameReceived);
 				
 				if (!isValidNickname) {
-					out.println("Este Nickname já esta em uso, por favor digite outro.\n");
+					out.println("Este Nickname já esta em uso, por favor digite outro.");
 					out.flush();
 					nicknameReceived = null;
 				} else {
@@ -136,6 +175,10 @@ public class ClientConected implements Runnable {
 	
 	public String getNickname() {
 		return nickname;
+	}
+	
+	public PrintWriter getOutStream() {
+		return this.out;
 	}
 
 }

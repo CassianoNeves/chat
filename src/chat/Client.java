@@ -156,21 +156,49 @@ public class Client extends JFrame {
 			
 			case CodesClientReceive.CODE_USUARIO:
 				message = message.replace(CodesClientReceive.CODE_USUARIO, "");
-				listModel.addElement(message);
+				addElementInListClients(message);
 				break;
 				
 			case CodesClientReceive.CODE_MESSAGE:
 				message = message.replace(CodesClientReceive.CODE_MESSAGE, "");
-				textChat.append(message + "\n");
+				addTextInChat(message);
+				break;
+				
+			case CodesClientReceive.CODE_ENTROU:
+				message = message.replace(CodesClientReceive.CODE_ENTROU, "");
+				addElementInListClients(message);
+				addTextInChat("----------" + message + " acabou de entrar ----------" );
+				break;
+				
+			case CodesClientReceive.CODE_SAIU:
+				message = message.replace(CodesClientReceive.CODE_SAIU, "");
+				removeElementInListClients(message);
+				addTextInChat("----------" + message + " acabou de sair ----------" );
 				break;
 
 			default:
-				textChat.append(message + "\n");
+				addTextInChat(message);
 				break;
 			}
 		}
+	}
+	
+	private void addTextInChat(String message) {
+		textChat.append(message + "\n");
+	}
+	
+	private void addElementInListClients(String nickname) {
+		if (!listModel.contains(nickname)) {
+			listModel.addElement(nickname);
+		}
+	}
+	
+	private void removeElementInListClients(String nickname) {
+		int index = listModel.indexOf(nickname);
 		
-		
+		if (index >= 0) {
+			listModel.remove(index);
+		}
 	}
 	
 	private String resolveCodeMessage(String message) {
@@ -180,6 +208,14 @@ public class Client extends JFrame {
 		
 		if (message.contains(CodesClientReceive.CODE_MESSAGE)) {
 			return CodesClientReceive.CODE_MESSAGE;
+		}
+		
+		if (message.contains(CodesClientReceive.CODE_ENTROU)) {
+			return CodesClientReceive.CODE_ENTROU;
+		}
+		
+		if (message.contains(CodesClientReceive.CODE_SAIU)) {
+			return CodesClientReceive.CODE_SAIU;
 		}
 		
 		return "";
