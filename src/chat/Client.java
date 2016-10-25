@@ -21,6 +21,8 @@ import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 
 import server.CodesClientReceive;
+import server.CodesServerReceive;
+import server.Logger;
 
 public class Client extends JFrame {
 
@@ -115,15 +117,43 @@ public class Client extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				Boolean close = false;
 				
-				String text = textMessage.getText();
+				String message = textMessage.getText();
 				
-				if (text != null && !text.isEmpty()) {
-					textChat.append("Eu: {0}\n".replace("{0}", text));
+				if (message != null && !message.isEmpty()) {
+					
+					switch (resolveMessageToSend(message)) {
+					case CodesServerReceive.CODE_SAIR:
+						cleanClientsLis();
+						close = true;
+						break;
+
+					default:
+						break;
+					}
+					
+					textChat.append("Eu: {0}\n".replace("{0}", message));
 					textMessage.setText("");
-					out.println(text);
+					out.println(message);
 					out.flush();
+					
+					if (close) {
+						System.exit(0);
+					}
 				}
+			}
+
+			private void cleanClientsLis() {
+				listModel.clear();
+			}
+
+			private String resolveMessageToSend(String message) {
+				if (message.contains(CodesServerReceive.CODE_SAIR)) {
+					return CodesServerReceive.CODE_SAIR;
+				}
+				
+				return "";
 			}
 		});
 		
@@ -141,9 +171,10 @@ public class Client extends JFrame {
 					while ((serverResponse = in.readLine()) != null) {
 						resolveMessage(serverResponse);
 					}
+					
+					textChat.append("----------A conexão foi fechada------------");
 				} catch (IOException e) {
-
-					e.printStackTrace();
+					Logger.error("createListnerReceivedMessager");
 				}
 			}
 		}.run();
@@ -170,10 +201,16 @@ public class Client extends JFrame {
 				addTextInChat("----------" + message + " acabou de entrar ----------" );
 				break;
 				
-			case CodesClientReceive.CODE_SAIU:
-				message = message.replace(CodesClientReceive.CODE_SAIU, "");
+			case CodesClientReceive.CODE_CAIU:
+				message = message.replace(CodesClientReceive.CODE_CAIU, "");
 				removeElementInListClients(message);
-				addTextInChat("----------" + message + " acabou de sair ----------" );
+				addTextInChat("---------- A conexão de " + message + " caiu inesperadamente ----------" );
+				break;
+				
+			case CodesClientReceive.CODE_SAIR:
+				message = message.replace(CodesClientReceive.CODE_SAIR, "");
+				removeElementInListClients(message);
+				addTextInChat("---------- " + message + " saiu do chat ----------" );
 				break;
 
 			default:
@@ -214,8 +251,12 @@ public class Client extends JFrame {
 			return CodesClientReceive.CODE_ENTROU;
 		}
 		
-		if (message.contains(CodesClientReceive.CODE_SAIU)) {
-			return CodesClientReceive.CODE_SAIU;
+		if (message.contains(CodesClientReceive.CODE_CAIU)) {
+			return CodesClientReceive.CODE_CAIU;
+		}
+		
+		if (message.contains(CodesClientReceive.CODE_SAIR)) {
+			return CodesClientReceive.CODE_SAIR;
 		}
 		
 		return "";
