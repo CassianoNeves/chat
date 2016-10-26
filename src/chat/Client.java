@@ -1,6 +1,8 @@
 package chat;
 
 import java.awt.Color;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -12,6 +14,7 @@ import java.net.UnknownHostException;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JList;
@@ -94,7 +97,8 @@ public class Client extends JFrame {
 		listModel = new DefaultListModel<>();
         
         usersOline = new JList<>(listModel);
-        usersOline.setBounds(10, 10, 150, 450);
+        usersOline.setBounds(10, 60, 150, 430);
+        usersOline.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         panel.add(usersOline);
 		
         textChat = new JTextArea();
@@ -117,48 +121,59 @@ public class Client extends JFrame {
 		setLocationRelativeTo(null);
 		setVisible(true);
 		
+		Image imgRefresh = Toolkit.getDefaultToolkit().getImage("images/refresh.png");
+
+		JButton buttonRefreshList = new JButton(new ImageIcon(imgRefresh));
+		buttonRefreshList.setBounds(10, 10, 70, HEIGHT_MESSAGE);
+		panel.add(buttonRefreshList);
+		
+		Image imgClose = Toolkit.getDefaultToolkit().getImage("images/close.png");
+		
+		JButton buttonCloseChat = new JButton(new ImageIcon(imgClose));
+		buttonCloseChat.setBounds(90, 10, 70, HEIGHT_MESSAGE);
+		panel.add(buttonCloseChat);
+		
 		buttonSend.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Boolean close = false;
-				
 				String message = textMessage.getText();
 				
 				if (message != null && !message.isEmpty()) {
 					
-					switch (resolveMessageToSend(message)) {
-					case CodesServerReceive.CODE_SAIR:
-						cleanClientsLis();
-						close = true;
-						break;
-
-					default:
-						break;
-					}
-					
 					textChat.append("Eu: {0}\n".replace("{0}", message));
 					textMessage.setText("");
+					
+					if (!message.contains(CodesServerReceive.CODE_PRIVADO)) {
+						message = CodesServerReceive.CODE_MENSAGEM + message;
+					}
+					
 					out.println(message);
 					out.flush();
-					
-					if (close) {
-						System.exit(0);
-					}
 				}
 			}
-
-			private void cleanClientsLis() {
+		});
+		
+		buttonRefreshList.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				out.println(CodesServerReceive.CODE_LIST);
+				out.flush();
+			}
+			
+		});
+		
+		buttonCloseChat.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				out.println(CodesServerReceive.CODE_SAIR);
+				out.flush();
 				listModel.clear();
+				System.exit(0);
 			}
-
-			private String resolveMessageToSend(String message) {
-				if (message.contains(CodesServerReceive.CODE_SAIR)) {
-					return CodesServerReceive.CODE_SAIR;
-				}
-				
-				return "";
-			}
+			
 		});
 		
 		initializeSocket();
