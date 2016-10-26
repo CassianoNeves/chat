@@ -62,9 +62,9 @@ public class Client extends JFrame {
 			
 			createListnerReceivedMessager();
 		} catch (UnknownHostException e) {
-			textChat.setText("Server: N√£o foi possivel conectar ao servidor, tente mais tartde.");
+			textChat.setText("Server: N„o foi possivel conectar ao servidor, tente mais tarde.");
 		} catch (IOException e) {
-			textChat.setText("Server: N√£o foi possivel conectar ao servidor, tente mais tartde.");
+			textChat.setText("Server: N„o foi possivel conectar ao servidor, tente mais tarde.");
 		}
 	}
 
@@ -77,21 +77,24 @@ public class Client extends JFrame {
 		textMessage.setLineWrap(true);
 		
 		JScrollPane scrollText = new JScrollPane();
-		scrollText.setBounds(170, 450, 520, HEIGHT_MESSAGE);
+		scrollText.setBounds(170, 420, 400, HEIGHT_MESSAGE);
 		scrollText.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scrollText.setViewportView(textMessage);
 		scrollText.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		scrollText.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		panel.add(scrollText);
 		
 		buttonSend = new JButton("ENVIAR");
-		buttonSend.setBounds(700, 450, 90, HEIGHT_MESSAGE);
+		buttonSend.setBackground(Color.WHITE);
+		buttonSend.setBorder(null);
+		buttonSend.setForeground(new Color(59, 89, 182));
+		buttonSend.setBounds(580, 420, 90, HEIGHT_MESSAGE);
 		panel.add(buttonSend);
 		
 		listModel = new DefaultListModel<>();
         
         usersOline = new JList<>(listModel);
-        usersOline.setBounds(10, 10, 150, 480);
-        usersOline.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        usersOline.setBounds(10, 10, 150, 450);
         panel.add(usersOline);
 		
         textChat = new JTextArea();
@@ -100,16 +103,17 @@ public class Client extends JFrame {
         textChat.setEditable(false);
 		
 		JScrollPane scrollTextChat = new JScrollPane();
-		scrollTextChat.setBounds(170, 10, 620, 430);
+		scrollTextChat.setBounds(170, 10, 500, 400);
 		scrollTextChat.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scrollTextChat.setViewportView(textChat);
-		scrollTextChat.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		scrollTextChat.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		panel.add(scrollTextChat);
+		panel.setBackground(new Color(59, 89, 182));
         
 		getContentPane().add(panel);
 		setTitle("Chat Client");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setSize(800, 500);
+		setSize(700, 510);
 		setLocationRelativeTo(null);
 		setVisible(true);
 		
@@ -172,7 +176,7 @@ public class Client extends JFrame {
 						resolveMessage(serverResponse);
 					}
 					
-					textChat.append("----------A conex√£o foi fechada------------");
+					textChat.append("----------A conex„o foi fechada------------");
 				} catch (IOException e) {
 					Logger.error("createListnerReceivedMessager");
 				}
@@ -204,7 +208,7 @@ public class Client extends JFrame {
 			case CodesClientReceive.CODE_CAIU:
 				message = message.replace(CodesClientReceive.CODE_CAIU, "");
 				removeElementInListClients(message);
-				addTextInChat("---------- A conex√£o de " + message + " caiu inesperadamente ----------" );
+				addTextInChat("---------- A conex„o de " + message + " caiu inesperadamente ----------" );
 				break;
 				
 			case CodesClientReceive.CODE_SAIR:

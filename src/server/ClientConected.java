@@ -52,7 +52,7 @@ public class ClientConected implements Runnable {
 				messageReceived = in.readLine();
 				
 				if (messageReceived == null && this.nickname != null) {
-					Logger.info(this.nickname + " caiu a conex√£o.");
+					Logger.info(this.nickname + " caiu a conex„o.");
 					removeYourSelf();
 					sendUserLeft();
 					return;
@@ -211,7 +211,7 @@ public class ClientConected implements Runnable {
 	}
 	
 	private void receiveNickname() {
-		out.println("Ol√° seja bem-vindo.");
+		out.println("Ol·, seja bem-vindo.");
 		out.println("Digite o seu Nickname para se conectar ao chat.");
 		out.flush();
 		
@@ -223,12 +223,12 @@ public class ClientConected implements Runnable {
 				isValidNickname = isValidNickname(nicknameReceived);
 				
 				if (!isValidNickname) {
-					out.println("Este Nickname j√° esta em uso, por favor digite outro.");
+					out.println("Este Nickname j· esta em uso, por favor digite outro.");
 					out.flush();
 					nicknameReceived = null;
 				} else {
 					this.nickname = nicknameReceived;
-					out.println("Agora voc√™ est√° no chat, aproveite!");
+					out.println("Agora vocÍ est· no chat, aproveite!");
 					out.flush();
 				}
 			}

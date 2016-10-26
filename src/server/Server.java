@@ -36,7 +36,7 @@ public class Server {
 			}
 			
 		} catch (IOException e) {
-			System.out.println("NÃ£o foi possivel iniciar o servidor");
+			System.out.println("Não foi possivel iniciar o servidor");
 			return;
 		}
 		
