@@ -135,8 +135,14 @@ public class Client extends JFrame {
 				String message = textMessage.getText();
 				
 				if (message != null && !message.isEmpty()) {
+					
 					textChat.append("Eu: {0}\n".replace("{0}", message));
 					textMessage.setText("");
+					
+					if (!message.contains(CodesServerReceive.CODE_PRIVADO)) {
+						message = CodesServerReceive.CODE_MENSAGEM + message;
+					}
+					
 					out.println(message);
 					out.flush();
 				}

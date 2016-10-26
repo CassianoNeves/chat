@@ -135,14 +135,14 @@ public class ClientConected implements Runnable {
 	}
 	
 	private void sendMessageToAllUsers(String messageToSend) {
+		messageToSend = messageToSend.replace(CodesServerReceive.CODE_MENSAGEM, "");
+		messageToSend = this.nickname + ":" + messageToSend;
+		String message = generateMessageProtocol(CodesClientReceive.CODE_MESSAGE, messageToSend);
+		
 		for (ClientConected client : clients) {
 			if (this.nickname.equals(client.getNickname()) || client.getNickname() == null) {
 				continue;
 			}
-			
-			messageToSend = messageToSend.replace(CodesServerReceive.CODE_MENSAGEM, "");
-			messageToSend = this.nickname + ":" + messageToSend;
-			String message = generateMessageProtocol(CodesClientReceive.CODE_MESSAGE, messageToSend);
 			
 			client.getOutStream().println(message);
 			client.getOutStream().flush();
@@ -228,6 +228,8 @@ public class ClientConected implements Runnable {
 				if (nicknameReceived == null) {
 					return;
 				}
+				
+				nicknameReceived = nicknameReceived.replace(CodesServerReceive.CODE_MENSAGEM, "");
 				
 				isValidNickname = isValidNickname(nicknameReceived);
 				
