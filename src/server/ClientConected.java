@@ -38,10 +38,14 @@ public class ClientConected implements Runnable {
 	@Override
 	public void run() {
 		receiveNickname();
-		sendUserJoined();
-		sendListOfClients();
 		
-		receiveMessages();
+		if (this.nickname != null) {
+			sendUserJoined();
+			sendListOfClients();
+			
+			receiveMessages();
+		}
+		
 	}
 
 	private void receiveMessages() {
@@ -220,6 +224,11 @@ public class ClientConected implements Runnable {
 		try {
 			while (!isValidNickname) {
 				String nicknameReceived = in.readLine();
+				
+				if (nicknameReceived == null) {
+					return;
+				}
+				
 				isValidNickname = isValidNickname(nicknameReceived);
 				
 				if (!isValidNickname) {
