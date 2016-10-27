@@ -1,6 +1,7 @@
 package chat;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -17,6 +18,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -75,6 +77,22 @@ public class Client extends JFrame {
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
 		
+		ImageIcon icon = new ImageIcon("images/user.png");
+		JLabel label = new JLabel(icon);
+		label.setBounds(50, 10, 72, 90);
+		panel.add(label);
+		
+		ImageIcon iconChat = new ImageIcon("images/icon-chat.png");
+		JLabel labelChat = new JLabel(iconChat);
+		labelChat.setBounds(560, 10, 110, 88);
+		panel.add(labelChat);
+		
+		JLabel userName = new JLabel("Diego Knorst");
+		userName.setBounds(170, 45, 200, 30);
+		userName.setFont(new Font("Serif", Font.PLAIN, 22));
+		userName.setForeground(Color.WHITE);
+		panel.add(userName);
+		
 		textMessage = new JTextArea();
 		textMessage.setBounds(170, 450, 520, HEIGHT_MESSAGE);
 		textMessage.setLineWrap(true);
@@ -83,7 +101,6 @@ public class Client extends JFrame {
 		scrollText.setBounds(170, 420, 400, HEIGHT_MESSAGE);
 		scrollText.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scrollText.setViewportView(textMessage);
-		scrollText.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		scrollText.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		panel.add(scrollText);
 		
@@ -97,8 +114,9 @@ public class Client extends JFrame {
 		listModel = new DefaultListModel<>();
         
         usersOline = new JList<>(listModel);
-        usersOline.setBounds(10, 60, 150, 430);
+        usersOline.setBounds(10, 160, 150, 300);
         usersOline.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        usersOline.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         panel.add(usersOline);
 		
         textChat = new JTextArea();
@@ -107,7 +125,7 @@ public class Client extends JFrame {
         textChat.setEditable(false);
 		
 		JScrollPane scrollTextChat = new JScrollPane();
-		scrollTextChat.setBounds(170, 10, 500, 400);
+		scrollTextChat.setBounds(170, 110, 500, 300);
 		scrollTextChat.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scrollTextChat.setViewportView(textChat);
 		scrollTextChat.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -124,13 +142,17 @@ public class Client extends JFrame {
 		Image imgRefresh = Toolkit.getDefaultToolkit().getImage("images/refresh.png");
 
 		JButton buttonRefreshList = new JButton(new ImageIcon(imgRefresh));
-		buttonRefreshList.setBounds(10, 10, 70, HEIGHT_MESSAGE);
+		buttonRefreshList.setBounds(10, 110, 70, HEIGHT_MESSAGE);
+		buttonRefreshList.setBackground(Color.WHITE);
+		buttonRefreshList.setBorder(null);
 		panel.add(buttonRefreshList);
 		
 		Image imgClose = Toolkit.getDefaultToolkit().getImage("images/close.png");
 		
 		JButton buttonCloseChat = new JButton(new ImageIcon(imgClose));
-		buttonCloseChat.setBounds(90, 10, 70, HEIGHT_MESSAGE);
+		buttonCloseChat.setBounds(90, 110, 70, HEIGHT_MESSAGE);
+		buttonCloseChat.setBackground(Color.WHITE);
+		buttonCloseChat.setBorder(null);
 		panel.add(buttonCloseChat);
 		
 		buttonSend.addActionListener(new ActionListener() {
